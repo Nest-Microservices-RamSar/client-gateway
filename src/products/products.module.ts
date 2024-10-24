@@ -19,8 +19,4 @@ import { envs, PRODUCT_SERVICE } from 'src/config';
     ]),
   ],
 })
-export class ProductsModule {
-  constructor() {
-    console.log({ envs });
-  }
-}
+export class ProductsModule {}
