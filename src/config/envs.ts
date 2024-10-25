@@ -22,6 +22,7 @@ const envsSchema = joi
 const { error, value } = envsSchema.validate(process.env);
 
 if (error) {
+  console.error(`Config validation error: ${error.message}`);
   throw new Error(`Config validation error: ${error.message}`);
 }
 
@@ -34,3 +35,5 @@ export const envs = {
   ordersMicroservicesHost: envVars.ORDERS_MICROSERVICES_HOST,
   ordersMicroservicesPort: envVars.ORDERS_MICROSERVICES_PORT,
 };
+
+console.log('Environment configuration:', envs);
