@@ -4,15 +4,18 @@ import {
   Get,
   Inject,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { OrdersPaginatioDto } from 'src/common/dto';
 import { ORDER_SERVICE } from 'src/config';
 import { CreateOrderDto, UpdateOrderDto } from './dto';
+import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -43,10 +46,18 @@ export class OrdersController {
   }
 
   @Patch(':id')
-  updateStatus(@Param('id') id: number, updateOrderDto: UpdateOrderDto) {
-    return this.ordersClient.send('updateOrderStatus', {
-      id,
-      updateOrderDto,
-    });
+  // @UseGuards()
+  updateStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateOrderStatusDto: UpdateOrderStatusDto,
+  ) {
+    try {
+      return this.ordersClient.send('updateOrderStatus', {
+        id,
+        status: updateOrderStatusDto.status,
+      });
+    } catch (error) {
+      throw new RpcException(error);
+    }
   }
 }
