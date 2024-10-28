@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
+import { catchError, firstValueFrom } from 'rxjs';
 import { OrdersPaginatioDto } from 'src/common/dto';
 import { ORDER_SERVICE } from 'src/config';
 import { CreateOrderDto, UpdateOrderDto } from './dto';
@@ -30,7 +30,11 @@ export class OrdersController {
 
   @Get()
   findAll(@Query() orderPaginationDto: OrdersPaginatioDto) {
-    return this.ordersClient.send('findAllOrders', orderPaginationDto);
+    return this.ordersClient.send('findAllOrders', orderPaginationDto).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
+    );
   }
 
   @Get(':id')
